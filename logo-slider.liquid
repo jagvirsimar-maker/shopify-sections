@@ -1,0 +1,134 @@
+{% schema %}
+{
+  "name": "Continuous Logo Slider",
+  "settings": [
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#fff"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "Logo",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "logo_image",
+          "label": "Logo Image"
+        },
+        {
+          "type": "url",
+          "id": "logo_link",
+          "label": "Logo Link"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 10,
+  "presets": [
+    {
+      "name": "Continuous Logo Slider",
+      "category": "Images"
+    }
+  ]
+}
+{% endschema %}
+
+<section class="continuous-logo-slider" style="background-color: {{ section.settings.background_color }};">
+  <div class="slider-wrapper">
+    <div class="slider-track">
+      {% for block in section.blocks %}
+        <div class="slide">
+          {% if block.settings.logo_link != blank %}
+            <a href="{{ block.settings.logo_link }}">
+              <img src="{{ block.settings.logo_image | img_url: '200x' }}" alt="Logo {{ forloop.index }}">
+            </a>
+          {% else %}
+            <img src="{{ block.settings.logo_image | img_url: '200x' }}" alt="Logo {{ forloop.index }}">
+          {% endif %}
+        </div>
+      {% endfor %}
+      {% comment %} Duplicate logos for infinite scroll {% endcomment %}
+      {% for block in section.blocks %}
+        <div class="slide">
+          {% if block.settings.logo_link != blank %}
+            <a href="{{ block.settings.logo_link }}">
+              <img src="{{ block.settings.logo_image | img_url: '200x' }}" alt="Logo {{ forloop.index }}">
+            </a>
+          {% else %}
+            <img src="{{ block.settings.logo_image | img_url: '200x' }}" alt="Logo {{ forloop.index }}">
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+.continuous-logo-slider {
+  overflow: hidden;
+  padding: 50px 0;
+}
+
+.slider-wrapper {
+  display: flex;
+}
+section.continuous-logo-slider {
+    background: #fff !important;
+}
+
+.slider-track {
+  display: flex;
+  width: calc(200%); /* duplicated logos */
+  animation: scroll 20s linear infinite;
+}
+
+.slide {
+  flex: 0 0 15%; /* 5 logos visible on desktop */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 25px;
+}
+
+.slide img {
+  max-height: 145px;
+  object-fit: contain;
+  transition: transform 0.3s;
+}
+
+.slide img:hover {
+  transform: scale(1.1);
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .slide {
+    flex: 0 0 10%; /* 4 logos on tablet */
+  }
+}
+
+@media (max-width: 768px) {
+  .slide {
+    flex: 0 0 33.33%; /* 3 logos on mobile */
+  }
+}
+
+@media (max-width: 480px) {
+  .slide {
+    flex: 0 0 25%; /* 2 logos on small phones */
+  }
+}
+</style>
